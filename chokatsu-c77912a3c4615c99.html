@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 検索エンジンに載せない（URLを知っている人だけが見られる状態にする） -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<!-- iPhoneのホーム画面に追加したときの見え方 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="蝶活">
+<meta name="theme-color" content="#fbfafd">
+<title>蝶活 問いかけBOOK</title>
+<style>
+  :root{
+    --ink:#4a4453;
+    --ink-soft:#8a8394;
+    --line:#e8e3ee;
+    --paper:#ffffff;
+    --radius:18px;
+    --shadow:0 2px 14px rgba(120,110,140,.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,system-ui,sans-serif,
+                "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";
+    color:var(--ink);
+    line-height:1.8;
+    background:#fbfafd;
+    -webkit-text-size-adjust:100%;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 8% -8%, #f6f0fb 0%, transparent 60%),
+      radial-gradient(800px 600px at 100% 0%, #eef4fb 0%, transparent 55%),
+      radial-gradient(700px 500px at 50% 100%, #fdf3f0 0%, transparent 60%),
+      #fbfafd;
+  }
+  .wrap{max-width:1240px;margin:0 auto;padding:28px 18px 80px;}
+
+  /* ---------- ヘッダー ---------- */
+  header{text-align:center;margin-bottom:26px;}
+  .title{
+    font-size:clamp(22px,5vw,30px);
+    letter-spacing:.14em;
+    margin:0 0 6px;
+    font-weight:600;
+  }
+  .subtitle{
+    font-size:13px;color:var(--ink-soft);letter-spacing:.1em;margin:0;
+  }
+
+  /* ---------- 今日の問い ---------- */
+  .today{
+    background:var(--paper);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--line);
+    padding:26px 22px 20px;
+    margin-bottom:30px;
+    position:relative;
+    overflow:hidden;
+  }
+  .today::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:5px;
+    background:linear-gradient(90deg,#a9cf9b,#e8c86e,#9ec3ae,#eaa392,#b39ed6,#8fa9d6);
+  }
+  .today-label{
+    font-size:12px;letter-spacing:.18em;color:var(--ink-soft);text-align:center;margin-bottom:14px;
+  }
+  .today-meta{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-bottom:16px;
+  }
+  .pill{
+    display:inline-flex;align-items:center;line-height:1.5;
+    font-size:12px;padding:5px 13px;border-radius:999px;
+    background:#f4f1f8;color:#6f6880;white-space:nowrap;
+  }
+  .pill.is-month{background:var(--m-bg);color:var(--m-accent);font-weight:600;}
+  .today-q{
+    font-size:clamp(19px,4.4vw,27px);
+    text-align:center;
+    line-height:1.7;
+    margin:0 0 6px;
+    font-weight:600;
+    padding:0 4px;
+  }
+  .today-role{font-size:13px;color:var(--ink-soft);text-align:center;margin:0 0 20px;}
+  .today-nav{
+    display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;cursor:pointer;border:1px solid var(--line);
+    background:#fff;color:var(--ink);border-radius:999px;
+    padding:8px 16px;font-size:13px;transition:.15s;
+  }
+  button:hover{background:#f7f4fb;}
+  button.primary{background:#efe9f7;border-color:#e0d6ee;color:#6b5b8c;}
+  .today-date{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:14px;}
+
+  /* ---------- 設定 ---------- */
+  details.setting{
+    margin:-14px 0 30px;font-size:13px;color:var(--ink-soft);
+  }
+  details.setting summary{
+    cursor:pointer;text-align:center;list-style:none;padding:6px;
+  }
+  details.setting summary::-webkit-details-marker{display:none;}
+  .setting-box{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;margin-top:10px;box-shadow:var(--shadow);
+  }
+  .setting-box label{display:block;margin-bottom:8px;color:var(--ink);}
+  input[type="date"],input[type="search"]{
+    font-family:inherit;font-size:15px;padding:9px 14px;
+    border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);
+  }
+
+  /* ---------- 検索・フィルタ ---------- */
+  .controls{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px 18px;margin-bottom:22px;
+    position:sticky;top:0;z-index:20;
+  }
+  .search-row{display:flex;gap:8px;margin-bottom:12px;}
+  .search-row input{flex:1;min-width:0;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+  .chips:last-child{margin-bottom:0;}
+  .chip{
+    font-size:12px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);
+    background:#fff;color:var(--ink-soft);cursor:pointer;transition:.15s;white-space:nowrap;
+  }
+  .chip:hover{background:#f8f5fc;}
+  .chip.on{background:#efe9f7;border-color:#d9cdec;color:#6b5b8c;font-weight:600;}
+  .count{font-size:12px;color:var(--ink-soft);text-align:right;margin-top:6px;}
+
+  /* ---------- 一覧 ---------- */
+  .month{
+    margin-bottom:34px;border-radius:24px;padding:20px 18px 22px;
+    background:var(--m-soft);border:1px solid var(--m-bg);
+  }
+  .month-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+  .month-no{
+    font-size:12px;letter-spacing:.16em;color:var(--m-accent);font-weight:600;
+  }
+  .month-title{font-size:19px;margin:0;font-weight:600;}
+  .month-lead{font-size:13px;color:var(--ink-soft);margin:0 0 18px;}
+  .month-range{font-size:12px;color:var(--m-accent);margin:0 0 14px;letter-spacing:.04em;}
+
+  /* カレンダー */
+  .cal-head{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px;
+  }
+  .cal-h{
+    text-align:center;padding:6px 2px;border-radius:10px;
+    background:rgba(255,255,255,.6);
+  }
+  .cal-h b{display:block;font-size:13px;font-weight:600;}
+  .cal-h small{display:block;font-size:10px;color:var(--ink-soft);line-height:1.4;margin-top:2px;}
+  .week{margin-bottom:10px;}
+  .week-label{
+    font-size:11px;color:var(--m-accent);letter-spacing:.1em;margin-bottom:5px;font-weight:600;
+  }
+  .cal-row{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  }
+  .cell{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:9px 10px 11px;cursor:pointer;transition:.15s;
+    display:flex;flex-direction:column;gap:5px;min-height:104px;
+  }
+  .cell:hover{box-shadow:0 4px 14px rgba(120,110,140,.14);border-color:var(--m-accent);}
+  .cell-date{
+    font-size:11px;color:var(--ink-soft);display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  }
+  .cell-date b{font-size:12px;color:var(--ink);font-weight:600;}
+  .cell-day{display:none;}
+  .cell-q{font-size:12px;line-height:1.6;margin:0;}
+  .cell.is-today{
+    border-color:var(--m-accent);border-width:2px;padding:8px 9px 10px;
+    background:var(--m-bg);
+  }
+  .badge{
+    font-size:10px;background:var(--m-accent);color:#fff;border-radius:999px;
+    padding:1px 7px;letter-spacing:.06em;
+  }
+  .cell.viewing{border-color:var(--m-accent);border-style:dashed;}
+  .cell.dim{opacity:.25;}
+  .cell.dim:hover{opacity:.6;}
+  mark{background:#fbf0c8;color:inherit;border-radius:3px;padding:0 2px;}
+  .nohit{
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:14px 18px;margin-bottom:18px;font-size:13px;color:var(--ink-soft);text-align:center;
+  }
+  .empty{text-align:center;color:var(--ink-soft);padding:40px 0;font-size:14px;}
+
+  /* ---------- トースト ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:#5c5468;color:#fff;font-size:13px;padding:10px 20px;border-radius:999px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  footer{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:40px;}
+
+  /* ---------- 印刷 ---------- */
+  @media print{
+    body{background:#fff;}
+    body::before{display:none;}
+    .controls,details.setting,.today-nav,.toast,footer,.no-print{display:none !important;}
+    .today{break-inside:avoid;}
+    .month{break-before:page;border:none;padding:0;margin-bottom:20px;}
+    .month:first-of-type{break-before:auto;}
+    .cell{break-inside:avoid;min-height:0;}
+    .cell.dim{opacity:1;}
+    .week{break-inside:avoid;}
+  }
+  /* 画面が狭いときは、カレンダーを縦2列に折りたたむ */
+  @media (max-width:820px){
+    .cal-head{display:none;}
+    .cal-row{grid-template-columns:1fr 1fr;}
+    .cell{min-height:0;}
+    .cell-day{display:inline;}
+  }
+  @media (max-width:520px){
+    .wrap{padding:20px 12px 60px;}
+    .cal-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 class="title">🦋 蝶活 問いかけBOOK</h1>
+    <p class="subtitle">朝を整え、今日を幸せに生きる ／ 半年168の問い</p>
+  </header>
+
+  <section class="today" id="today"></section>
+
+  <details class="setting">
+    <summary>⚙️ スタート日を変える</summary>
+    <div class="setting-box">
+      <label for="startDate">蝶活の「1ヶ月目・1週目・月曜日」にあたる日</label>
+      <input type="date" id="startDate">
+      <button class="primary" id="resetStart" style="margin-left:8px;">初期設定にもどす</button>
+      <p style="margin:10px 0 0;font-size:12px;">この設定はこの端末のブラウザに保存されます。</p>
+    </div>
+  </details>
+
+  <div class="controls no-print">
+    <div class="search-row">
+      <input type="search" id="q" placeholder="🔍 ことばで探す（例：感謝、勇気、手放す）">
+      <button id="clear">クリア</button>
+    </div>
+    <div class="chips" id="monthChips"></div>
+    <div class="chips" id="dayChips"></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <main id="list"></main>
+
+  <footer>
+    <button onclick="window.print()" class="no-print">🖨 印刷 / PDFで保存</button>
+    <p>ゆっきーの星と語らう秘密の部屋 ／ 蝶活</p>
+  </footer>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ データ ============ */
+const DAYS = [
+  {n:"月", emoji:"🌱", role:"今週・今日を選ぶ"},
+  {n:"火", emoji:"💛", role:"感謝・幸せに気づく"},
+  {n:"水", emoji:"🌸", role:"自分を大切にする"},
+  {n:"木", emoji:"🦋", role:"小さなチャレンジ"},
+  {n:"金", emoji:"🌈", role:"未来・可能性"},
+  {n:"土", emoji:"☕", role:"ゆるめる・楽しむ"},
+  {n:"日", emoji:"🌟", role:"振り返る・気づく"}
+];
+
+const MONTHS = [
+  {
+    title:"🌱 自分を知る", lead:"まずは、今の自分をそのまま見つめる1ヶ月",
+    bg:"#EDF5E9", accent:"#6F9A5C", soft:"#F7FBF5",
+    weeks:[
+      ["今週、どんな自分でいたい？","今、ありがたいことは？","今の自分の好きなところは？","今日、いつもと違うことを一つするとしたら？","本当はどんな毎日を送りたい？","今の私が休ませたいものは？","今週、自分について気づいたことは？"],
+      ["今日、一番大切にしたいことは？","最近、誰のおかげで笑顔になった？","今の自分を一言で表すなら？","小さな勇気を出すなら何をする？","私が大切にしたい価値観は？","今、心がほっとすることは？","今週、一番心が動いた瞬間は？"],
+      ["今日、どんな気持ちで過ごしたい？","当たり前だけどありがたいことは？","私が無意識に頑張っていることは？","「やってみたい」と思っていることは？","私が本当に好きな時間は？","今日は何をしなくてもいい？","今週、自分らしかった瞬間は？"],
+      ["今日の自分に何を選んであげる？","自分に「ありがとう」を言うなら何に？","今の私が一番必要としているものは？","少しだけ勇気を出すなら何を変える？","もっと増やしたい時間は？","今日、自分を喜ばせるなら何をする？","この1ヶ月で自分についてわかったことは？"]
+    ]
+  },
+  {
+    title:"💛 自分を大切にする", lead:"頑張ってきた自分に、やさしさを向けなおす1ヶ月",
+    bg:"#FBF2DC", accent:"#C79328", soft:"#FEFAF0",
+    weeks:[
+      ["今週、自分のために優先したいことは？","私を支えてくれている人は？","頑張ってきた自分に何と言いたい？","人の期待ではなく自分のために選ぶなら？","もっと自分を大切にできる未来は？","今日は自分を甘やかすなら何をする？","今週、自分に優しくできた瞬間は？"],
+      ["今日、自分の心を守るために何を選ぶ？","今までの自分に感謝したいことは？","「私はよくやってる」と思えることは？","無理していることを一つ減らすなら？","自分を大切にした先に何が待っている？","今、一番食べたいもの・したいことは？","今週、自分を守れた選択は？"],
+      ["今週、頑張りすぎないために何をする？","私の毎日にある小さな幸せは？","自分に言ってあげたい優しい言葉は？","「NO」と言ってもいいことは？","自分らしく生きている未来の私は？","今日は何を楽しもう？","今週、心が軽くなったことは？"],
+      ["今日、自分を後回しにしないために何をする？","私の存在そのものに感謝できることは？","今の自分を抱きしめるなら何と言う？","自分のために一つ決断するとしたら？","もっと自分を好きになった私は何をしている？","今日、自分にプレゼントしたい時間は？","この1ヶ月、自分への接し方はどう変わった？"]
+    ]
+  },
+  {
+    title:"🍃 手放す", lead:"握りしめていたものを、そっと置いてみる1ヶ月",
+    bg:"#E6EFE9", accent:"#6D9482", soft:"#F5F9F7",
+    weeks:[
+      ["今週、手放したいものは？","手放せたら楽になりそうなことは？","「頑張らなくてもいい」としたら？","一つだけやめてみるなら？","手放した先にどんな自分がいる？","今日は何も考えない時間を作るなら？","今週、手放せたことは？"],
+      ["今、握りしめているものは？","今まで役に立ってくれた考え方は？","「こうあるべき」を一つ挙げるなら？","その「べき」を少し緩めるとしたら？","自由になった私は何をしたい？","今日は力を抜くとしたら？","今週、心が軽くなった瞬間は？"],
+      ["今週、完璧を手放すなら何をする？","過去の自分に感謝したいことは？","失敗した自分に何と言いたい？","苦手なことを無理に克服しなくてもいいとしたら？","「もっと自由な私」はどんな毎日？","今日は「まあ、いいか」を一つ許すなら？","今週、自分に許せたことは？"],
+      ["今日、執着しなくていいことは？","今ある幸せに気づくなら？","過去の私を許すとしたら何を？","一歩手放すためにできる行動は？","手放した私が手に入れるものは？","心と体をゆるめるために何をする？","この1ヶ月、何を手放せた？"]
+    ]
+  },
+  {
+    title:"🌈 幸せを見つける", lead:"すでにある幸せに、気づく目を育てる1ヶ月",
+    bg:"#FBE9E4", accent:"#CE7B67", soft:"#FEF6F3",
+    weeks:[
+      ["今週、どんな幸せを見つけたい？","昨日の幸せは何？","私が幸せを感じる瞬間は？","幸せのために今日できることは？","私にとって「幸せな人生」とは？","今日、自分を笑顔にすることは？","今週、一番幸せだった瞬間は？"],
+      ["今日、何を楽しみにする？","身近にある美しいものは？","私の好きなところを3つ挙げるなら？","誰かに笑顔を届けるなら？","理想の一日はどんな一日？","好きなことだけをするなら何をする？","今週、幸せに気づけた瞬間は？"],
+      ["今日、小さな幸せを一つ作るなら？","今の暮らしの中で恵まれていることは？","私の心が喜ぶことは？","「楽しそう！」を優先して選ぶなら？","未来の私が今の私に感謝することは？","子どもの頃のように楽しむなら何をする？","今週、もっと増やしたい幸せは？"],
+      ["今日を幸せな日にするために何を選ぶ？","「ありがとう」を伝えたい人は？","私が私であることの幸せは？","楽しそうだからやってみることは？","幸せな私なら今日どう過ごす？","今日は何にワクワクする？","この1ヶ月で見つけた幸せは？"]
+    ]
+  },
+  {
+    title:"🦋 一歩踏み出す", lead:"小さな勇気を、行動にしてみる1ヶ月",
+    bg:"#EFE9F7", accent:"#8A70B8", soft:"#F9F6FC",
+    weeks:[
+      ["今週、一歩進みたいことは？","応援してくれる人に感謝するとしたら？","挑戦する自分にどんな言葉をかける？","今日、勇気を出してやってみることは？","一歩踏み出した半年後の私は？","頑張った自分を休ませるなら？","今週、勇気を出せたことは？"],
+      ["今日、先延ばしにしていることは？","これまで乗り越えてきたことは？","「できるかも」と思えることは？","5分だけ始めるなら何をする？","挑戦した私が見ている景色は？","結果を気にせず楽しむなら？","今週の小さな成功は？"],
+      ["今週、自分に約束することは？","私の力になってくれた言葉は？","自分の可能性を信じるなら？","失敗してもいいなら何をする？","本気でやってみたいことは？","今まで頑張った自分を祝うなら？","今週、一歩踏み出して変わったことは？"],
+      ["今日、未来の自分のために何をする？","自分の強さに感謝するとしたら？","私が思っている以上にできていることは？","今までの自分ならしない選択をするとしたら？","どんな自分に成長したい？","「よく頑張った！」と自分を労うなら？","この1ヶ月で勇気を出したことは？"]
+    ]
+  },
+  {
+    title:"✨ 未来を描く", lead:"これからの人生を、自分で選んでいく1ヶ月",
+    bg:"#E5EDF9", accent:"#6483BC", soft:"#F5F8FD",
+    weeks:[
+      ["これからどんな毎日を選びたい？","今までの人生で感謝したいことは？","これからも大切にしたい自分の魅力は？","未来のために今日できることは？","1年後、どんな私でいたい？","理想の休日はどんな一日？","今週、未来につながったことは？"],
+      ["これから大切にしたいことは？","私の人生を豊かにしてくれた人は？","これからの私に必要な優しさは？","新しい未来のために何を始める？","どんな人生だったら「幸せだった」と言える？","未来の自分に休暇をプレゼントするなら？","今週、未来が楽しみになった瞬間は？"],
+      ["これから、どんな自分で生きたい？","今までの経験に「ありがとう」を言うなら？","未来の私が今の私に伝える言葉は？","やってみたいことを一つ選ぶなら？","もし何でもできるとしたら、どんな人生を選ぶ？","これからも残したい「私の楽しみ」は？","この半年で一番変わったことは？"],
+      ["これからの人生で何を大切にする？","この半年で感謝したいことは？","半年前の自分に何と言ってあげたい？","次の半年で挑戦したいことは？","私がこれから創っていきたい人生は？","これからも自分を幸せにするために何をする？","半年間の自分に贈る言葉は？"]
+    ]
+  }
+];
+
+/* ============ 日付まわり ============ */
+const DAY_MS = 86400000;
+function toKey(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function fromKey(s){
+  const [y,m,d] = s.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+function mondayOfWeek(d){
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const w = (x.getDay()+6)%7; // 月=0
+  x.setDate(x.getDate()-w);
+  return x;
+}
+function daysBetween(a,b){
+  return Math.round((new Date(b.getFullYear(),b.getMonth(),b.getDate())
+                   - new Date(a.getFullYear(),a.getMonth(),a.getDate()))/DAY_MS);
+}
+
+/* 蝶活の「1ヶ月目・1週目・月曜日」にあたる日（⚙️から変更できます） */
+const DEFAULT_START = "2026-08-03";
+
+/* localStorage が使えない環境（data: URL など）でも落ちないように */
+const STORE = "chokatsu-start";
+let memoryStart = null;
+function readStore(){
+  try{ return localStorage.getItem(STORE); }catch(e){ return memoryStart; }
+}
+function writeStore(v){
+  memoryStart = v;
+  try{ localStorage.setItem(STORE, v); }catch(e){}
+}
+function getStart(){
+  const saved = readStore();
+  return fromKey(saved || DEFAULT_START);
+}
+function setStart(d){ writeStore(toKey(d)); }
+
+/* {月, 週, 曜日} → 実際の日付 */
+function dateOf(m, w, d){
+  const s = getStart();
+  return new Date(s.getFullYear(), s.getMonth(), s.getDate() + (m*4 + w)*7 + d);
+}
+function md(date){ return (date.getMonth()+1)+"/"+date.getDate(); }
+
+/* 指定日 → {monthIndex, weekIndex, dayIndex, status} */
+function positionOf(date){
+  const start = getStart();
+  const diff = daysBetween(start, date);
+  const dayIndex = (date.getDay()+6)%7;
+  let weekTotal = Math.floor(diff/7);
+  let status = "ok";
+  if(weekTotal < 0){ weekTotal = 0; status = "before"; }
+  if(weekTotal > 23){ weekTotal = 23; status = "after"; }
+  return {
+    m: Math.floor(weekTotal/4),
+    w: weekTotal%4,
+    d: dayIndex,
+    status,
+    weekTotal
+  };
+}
+
+/* ============ 今日の問い ============ */
+let viewDate = new Date();
+
+function renderToday(){
+  const p = positionOf(viewDate);
+  const M = MONTHS[p.m];
+  const D = DAYS[p.d];
+  const q = M.weeks[p.w][p.d];
+  const el = document.getElementById("today");
+  el.style.setProperty("--m-bg", M.bg);
+  el.style.setProperty("--m-accent", M.accent);
+
+  const isToday = toKey(viewDate) === toKey(new Date());
+  const dateStr = `${viewDate.getFullYear()}年${viewDate.getMonth()+1}月${viewDate.getDate()}日（${D.n}）`;
+
+  let note = "";
+  if(p.status === "before") note = "※ まだ蝶活スタート前です。1ヶ月目1週目を表示しています";
+  if(p.status === "after")  note = "※ 半年の旅は完走です🎊 最終週を表示しています";
+
+  el.innerHTML = `
+    <p class="today-label">${isToday ? "今日の問い" : "この日の問い"}</p>
+    <div class="today-meta">
+      <span class="pill is-month">${p.m+1}ヶ月目　${M.title}</span>
+      <span class="pill">${p.w+1}週目</span>
+      <span class="pill">${D.emoji} ${D.n}曜 ${D.role}</span>
+    </div>
+    <p class="today-q">${esc(q)}</p>
+    <p class="today-role">${esc(M.lead)}</p>
+    <div class="today-nav no-print">
+      <button id="prevDay">← 前の日</button>
+      <button class="primary" id="copyToday">📋 コピー</button>
+      <button id="goToday">今日にもどる</button>
+      <button id="nextDay">次の日 →</button>
+    </div>
+    <p class="today-date">${dateStr}${note ? "<br>"+note : ""}</p>
+  `;
+
+  document.getElementById("prevDay").onclick = ()=>{ viewDate = new Date(viewDate.getTime()-DAY_MS); renderToday(); markTodayCard(); };
+  document.getElementById("nextDay").onclick = ()=>{ viewDate = new Date(viewDate.getTime()+DAY_MS); renderToday(); markTodayCard(); };
+  document.getElementById("goToday").onclick = ()=>{ viewDate = new Date(); renderToday(); markTodayCard(); };
+  document.getElementById("copyToday").onclick = ()=>{
+    copy(`${D.emoji} ${D.n}曜日の問いかけ\n\n${q}\n\n#蝶活 #${M.title.replace(/[^\p{L}]/gu,"")}`);
+  };
+}
+
+/* ============ 一覧 ============ */
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function highlight(text, kw){
+  const safe = esc(text);
+  if(!kw) return safe;
+  const k = esc(kw).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  return safe.replace(new RegExp(k,"g"), m=>`<mark>${m}</mark>`);
+}
+
+let filterMonths = new Set();
+let filterDays = new Set();
+let keyword = "";
+
+function buildChips(){
+  const mc = document.getElementById("monthChips");
+  mc.innerHTML = `<button class="chip on" data-m="all">すべての月</button>` +
+    MONTHS.map((m,i)=>`<button class="chip" data-m="${i}">${i+1}ヶ月目 ${m.title.split(" ")[0]}</button>`).join("");
+  const dc = document.getElementById("dayChips");
+  dc.innerHTML = `<button class="chip on" data-d="all">すべての曜日</button>` +
+    DAYS.map((d,i)=>`<button class="chip" data-d="${i}">${d.emoji}${d.n}</button>`).join("");
+
+  mc.onclick = e=>{
+    const b = e.target.closest(".chip"); if(!b) return;
+    if(b.dataset.m === "all"){ filterMonths.clear(); }
+    else{
+      const i = +b.dataset.m;
+      filterMonths.has(i) ? filterMonths.delete(i) : filterMonths.add(i);
+    }
+    syncChips(); render();
+  };
+  dc.onclick = e=>{
+    const b = e.target.closest(".chip"); if(!b) return;
+    if(b.dataset.d === "all"){ filterDays.clear(); }
+    else{
+      const i = +b.dataset.d;
+      filterDays.has(i) ? filterDays.delete(i) : filterDays.add(i);
+    }
+    syncChips(); render();
+  };
+}
+function syncChips(){
+  document.querySelectorAll("#monthChips .chip").forEach(b=>{
+    b.classList.toggle("on", b.dataset.m === "all" ? filterMonths.size===0 : filterMonths.has(+b.dataset.m));
+  });
+  document.querySelectorAll("#dayChips .chip").forEach(b=>{
+    b.classList.toggle("on", b.dataset.d === "all" ? filterDays.size===0 : filterDays.has(+b.dataset.d));
+  });
+}
+
+function render(){
+  const list = document.getElementById("list");
+  const todayKey = toKey(new Date());
+  const filtering = keyword || filterDays.size;
+  let html = "", hits = 0;
+
+  const headHtml = `<div class="cal-head">` + DAYS.map(d=>
+      `<div class="cal-h"><b>${d.emoji} ${d.n}</b><small>${d.role}</small></div>`
+    ).join("") + `</div>`;
+
+  MONTHS.forEach((M, mi)=>{
+    if(filterMonths.size && !filterMonths.has(mi)) return;
+    let weeksHtml = "";
+    M.weeks.forEach((week, wi)=>{
+      let cells = "";
+      week.forEach((q, di)=>{
+        const date = dateOf(mi, wi, di);
+        const dim = (filterDays.size && !filterDays.has(di)) || (keyword && !q.includes(keyword));
+        if(!dim) hits++;
+        const isToday = toKey(date) === todayKey;
+        cells += `<div class="cell${dim?" dim":""}${isToday?" is-today":""}"
+             data-q="${esc(q)}" data-d="${di}" data-pos="${mi}-${wi}-${di}">
+            <div class="cell-date">
+              <span>${DAYS[di].emoji}</span><b>${md(date)}</b>
+              <span class="cell-day">${DAYS[di].n}</span>
+              ${isToday?'<span class="badge">今日</span>':""}
+            </div>
+            <p class="cell-q">${highlight(q, keyword)}</p>
+          </div>`;
+      });
+      weeksHtml += `<div class="week"><div class="week-label">${wi+1}週目</div><div class="cal-row">${cells}</div></div>`;
+    });
+    const from = md(dateOf(mi,0,0)), to = md(dateOf(mi,3,6));
+    html += `<section class="month" style="--m-bg:${M.bg};--m-accent:${M.accent};--m-soft:${M.soft}">
+        <div class="month-head">
+          <span class="month-no">${mi+1}ヶ月目</span>
+          <h2 class="month-title">${M.title}</h2>
+        </div>
+        <p class="month-lead">${esc(M.lead)}</p>
+        <p class="month-range">📅 ${from} 〜 ${to}</p>
+        ${headHtml}
+        ${weeksHtml}
+      </section>`;
+  });
+
+  if(filtering && hits === 0){
+    html = `<p class="nohit">その言葉を含む問いは見つかりませんでした。ちがう言葉で探してみてね🦋</p>` + html;
+  }
+  list.innerHTML = html;
+  document.getElementById("count").textContent =
+    filtering ? `${hits}問が見つかりました（全168問）` : `全168問`;
+
+  list.querySelectorAll(".cell").forEach(c=>{
+    c.onclick = ()=>{
+      const d = DAYS[+c.dataset.d];
+      copy(`${d.emoji} ${d.n}曜日の問いかけ\n\n${c.dataset.q}\n\n#蝶活`);
+    };
+  });
+  markTodayCard();
+}
+
+/* 「前の日／次の日」で見ているマスに印をつける */
+function markTodayCard(){
+  document.querySelectorAll(".cell.viewing").forEach(c=>c.classList.remove("viewing"));
+  if(toKey(viewDate) === toKey(new Date())) return;
+  const p = positionOf(viewDate);
+  const el = document.querySelector(`.cell[data-pos="${p.m}-${p.w}-${p.d}"]`);
+  if(el) el.classList.add("viewing");
+}
+
+/* ============ コピー ============ */
+function copy(text){
+  const done = ()=>toast("コピーしました 🦋");
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallback(text,done));
+  }else{
+    fallback(text,done);
+  }
+}
+function fallback(text, done){
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); done(); }catch(e){ toast("コピーできませんでした"); }
+  document.body.removeChild(ta);
+}
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+}
+
+/* ============ 起動 ============ */
+document.getElementById("q").addEventListener("input", e=>{
+  keyword = e.target.value.trim();
+  render();
+});
+document.getElementById("clear").onclick = ()=>{
+  keyword = ""; document.getElementById("q").value = "";
+  filterMonths.clear(); filterDays.clear();
+  syncChips(); render();
+};
+const sd = document.getElementById("startDate");
+sd.value = toKey(getStart());
+sd.onchange = ()=>{
+  if(sd.value){ setStart(fromKey(sd.value)); renderToday(); render(); toast("スタート日を更新しました"); }
+};
+document.getElementById("resetStart").onclick = ()=>{
+  const m = fromKey(DEFAULT_START);
+  setStart(m); sd.value = toKey(m); renderToday(); render(); toast("スタート日をもどしました");
+};
+
+buildChips();
+renderToday();
+render();
+</script>
+</body>
+</html>
