@@ -97,6 +97,33 @@
     color:#5c5568;text-align:center;
   }
   .today-role{font-size:12px;color:var(--ink-soft);text-align:center;margin:0 0 20px;}
+
+  /* ---------- LINE用の文章 ---------- */
+  .line-box{
+    max-width:560px;margin:0 auto 20px;
+    background:#fff;border:1px dashed #d9d0e8;border-radius:18px;
+    padding:14px 18px 16px;
+  }
+  .line-box h4{
+    margin:0 0 9px;font-size:11.5px;font-weight:600;
+    color:var(--m-accent);letter-spacing:.06em;text-align:center;
+  }
+  .line-text{
+    margin:0;white-space:pre-wrap;font-family:inherit;
+    font-size:13.5px;line-height:1.95;color:#4e4758;
+    background:var(--m-soft,#faf8fd);border-radius:12px;
+    padding:14px 16px;text-align:left;
+  }
+  .line-copy{
+    display:block;margin:12px auto 0;
+    background:#06C755;border-color:#06C755;color:#fff;font-weight:600;
+    padding:9px 24px;font-size:13.5px;
+  }
+  .line-copy:hover{background:#05b24c;}
+  @media (max-width:560px){
+    .line-box{padding:12px 13px 14px;}
+    .line-text{font-size:13px;padding:12px 13px;}
+  }
   .today-nav{
     display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
   }
@@ -785,6 +812,21 @@ function positionOf(date){
 }
 
 /* ============ 今日の問い ============ */
+function lineText(p, M, D, q, note, d){
+  const parts = M.title.trim().split(/\s+/);
+  const mEmoji = parts[0], mName = parts.slice(1).join(" ");
+  let t = "おはようございます\u2600\uFE0F\n\n";
+  if(p.status === "ok" && p.w === 0 && p.d === 0){
+    t += `今日から蝶活は${p.m+1}ヶ月目${mEmoji}\n「${mName}」が始まります\n\n`;
+  }
+  t += `${D.emoji}${d.getMonth()+1}月${d.getDate()}日(${D.n})の問いかけ\n\n`;
+  t += `【${q}】\n\n`;
+  t += `${note}\n\n`;
+  t += "よかったら、ひとこと聞かせてくださいね\u{1FA77}\n\n";
+  t += "今日もいい一日になりますように\u2728";
+  return t;
+}
+
 let viewDate = new Date();
 
 function renderToday(){
@@ -796,9 +838,11 @@ function renderToday(){
   const el = document.getElementById("today");
   el.style.setProperty("--m-bg", M.bg);
   el.style.setProperty("--m-accent", M.accent);
+  el.style.setProperty("--m-soft", M.soft);
 
   const isToday = toKey(viewDate) === toKey(new Date());
   const dateStr = `${viewDate.getFullYear()}年${viewDate.getMonth()+1}月${viewDate.getDate()}日（${D.n}）`;
+  const lt = lineText(p, M, D, q, todayNote, viewDate);
 
   let note = "";
   if(p.status === "before") note = "※ まだ蝶活スタート前です。1ヶ月目1週目を表示しています";
@@ -814,6 +858,11 @@ function renderToday(){
     <p class="today-q">${esc(q)}</p>
     <p class="today-note">${esc(todayNote)}</p>
     <p class="today-role">${esc(M.lead)}</p>
+    <div class="line-box no-print">
+      <h4>\u{1F4AC} LINEにそのまま貼れる文章</h4>
+      <p class="line-text" id="lineText">${esc(lt)}</p>
+      <button class="line-copy" id="copyLine">\u{1F4CB} LINE用をコピー</button>
+    </div>
     <div class="today-nav no-print">
       <button id="prevDay">← 前の日</button>
       <button class="primary" id="copyToday">📋 コピー</button>
@@ -826,6 +875,7 @@ function renderToday(){
   document.getElementById("prevDay").onclick = ()=>{ viewDate = new Date(viewDate.getTime()-DAY_MS); renderToday(); markTodayCard(); };
   document.getElementById("nextDay").onclick = ()=>{ viewDate = new Date(viewDate.getTime()+DAY_MS); renderToday(); markTodayCard(); };
   document.getElementById("goToday").onclick = ()=>{ viewDate = new Date(); renderToday(); markTodayCard(); };
+  document.getElementById("copyLine").onclick = ()=>{ copy(lt); };
   document.getElementById("copyToday").onclick = ()=>{
     copy(`${D.emoji} ${D.n}曜日の問いかけ\n\n${q}\n\n${todayNote}\n\n#蝶活 #${M.title.replace(/[^\p{L}]/gu,"")}`);
   };
